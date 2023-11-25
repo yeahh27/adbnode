@@ -4,24 +4,16 @@ $(document).ready(function () {
 		$.ajax('/list', {
 			'success': function (list) {
 				var trs = '';
-				adbData = JSON.parse(list);
+				adbData = list;
 				console.log(adbData)
 				var ips = adbData.ips;
 				if(ips) {
 					for(var i = 0; i < ips.length; i++) {	// 테이블 내용 만들기
-						// var isConn = adbData.devices.filter(v => v.ip == ips[i].ip);
-						var isConn = adbData.devices.filter(v => {
-							if(v.ip == ips[i].ip) {
-								v.id = ips[i].id;
-								return v;
-							}
-						});
-						// console.log("isConn", isConn);
 						trs += `<tr id="${ips[i].id}">` + 
 									'<td>' + (i + 1) + '</td>' + 
 									`<td class="ip">` + ips[i].ip + '</td>' +
-									(isConn[0] ? 
-										`<td>${isConn[0].port + ' ' + isConn[0].model}</td>` + 
+									(ips[i].port ? 
+										`<td>${ips[i].port + ' ' + ips[i].model}</td>` + 
 										`<td><button type="button" class="btn btn-success screenshot">캡</button></td>` + 
 										`<td><button type="button" class="btn btn-warning log">록</button></td>` + 
 										`<td><button type="button" class="btn btn-secondary disconn">끊기</button></td>` 
@@ -52,23 +44,6 @@ $(document).ready(function () {
 		if(!regexr.test($('#ip').val())) return;
 		
 		$.ajax('/connect', {
-			'method': 'POST',
-			'dataType': 'JSON',
-			'data': {
-				"ip": $('#ip').val()
-			},
-			'success': function() {
-				// $('#ip').val('');
-				get_list();
-			}
-		});
-	});
-
-	$('.form-inline #disconnect').click(function () {
-		let regexr = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/g;
-		if(!regexr.test($('#ip').val())) return;
-		
-		$.ajax('/disconnect', {
 			'method': 'POST',
 			'dataType': 'JSON',
 			'data': {
@@ -140,14 +115,20 @@ $(document).ready(function () {
 			return;
 		} 
 		let _ = $(this);
+		let data = adbData.ips.find(v => v.id == _.closest('tr').attr('id'));
 		_.attr("disabled", true);
 		$.ajax('/screen', {
 			'method': 'POST',
 			'data': {
-				'ip': adbData.ips.find(v => v.id == $(this).closest('tr').attr('id')).ip
+				'ip': data.ip + data.port,
+				'dir': adbData.dir
 			},
 			'success': function(fileName) {
-				alert(`${fileName}.png 캡쳐 완료.`);
+				if(fileName) {
+					alert(`${fileName}.png 캡쳐 완료.`);
+				} else {
+					alert(`캡쳐 실패 ㅠ_ㅠ`);
+				}
 				_.attr("disabled", false);
 			}
 		});

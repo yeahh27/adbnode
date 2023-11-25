@@ -36,55 +36,59 @@ var adbExec = function (command, callback) {
 exports.list = function(req, res){
 	var regexr1 = /^(([1-9]?\d|1\d{2}|2([0-4]\d)|25[0-5])\.){3}([1-9]?\d|1\d{2}|2([0-4]\d)|25[0-5])/;
 	// var regexr =  /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/;
-    
+    var regexr2 = /^(.*?)(?=:)|:(\d{4})|(?<=model:)(.*?)(?=\s)/g;
+
 	adbExec('adb devices -l', (rs) => {
 		if(rs.resCode == 'stdout') {
-			var devices = rs.resMsg.split('\r\n').filter(v => regexr1.test(v));
+			var devices = rs.resMsg.split('\n').filter(v => regexr1.test(v));
 			if(fs.existsSync('./adb_data.json')) {
 				fs.readFile('./adb_data.json', {
 					'encoding': 'utf8'
 				}, function (err, list) {	// adb_data.json 파일 읽기
-					let regexr2 = /^(.*?)(?=:)|:(\d{4})|(?<=model:)(.*?)(?=\s)/g;
-					let diff = [];
-					list = JSON.parse(list).ips.map((v, i) => {
+					list = JSON.parse(list);
+
+					let diff = devices.map(v => v.split(":")[0]).filter(v => !list.ips.map(v2 => v2.ip).includes(v))
+					if(diff.length > 0) {
+						for(var i=0; i<diff.length; i++) {
+							list.ips.push({
+								id : list.ips.length + 1,
+								ip : diff[i]
+							});
+						}
+						fs.writeFile('./adb_data.json', JSON.stringify(list), function (err) {	// adb_data.json 파일 쓰기
+						});
+					} 
+					list.ips = list.ips.map(v => {
 						devices.map(v2 => {
 							let d = v2.match(regexr2);
 							if(v.ip == d[0]) {
-								diff.push(i);
 								Object.assign(v, {port: d[1], model: d[2]})
 							}
 						})
 						return v;
 					});
-					if(diff.length == 0) {
-						list = `${list.slice(0,-1)}, "devices": ${JSON.stringify(devList)}}`;
-						res.json(list);
-					} else {
-						list = JSON.parse(list);
-						for(var i=0; i<diff.length; i++) {
-							list.ips.push({
-								"id" : list.ips.length + 1,
-								"ip" : diff[i]
-							});
-						}
-						/* fs.writeFile('./adb_data.json', JSON.stringify(list), function (err) {	// adb_data.json 파일 쓰기
-							list.devices = devList;
-							res.json(JSON.stringify(list));
-						}); */
-					}
+					res.json(list);
 				});
 			} else {
 				var ips = [];
-				for(var i=0; i<devices.length; i++) {
+				var ipsInfo = [];
+				devices.map((v, i) => {
+					let d = v.match(regexr2);
 					ips.push({
-						"id" : i,
-						"ip" : devices[i].split(":")[0]
+						id : i,
+						ip : d[0]
 					});
-				}
+					ipsInfo.push({
+						port : d[1],
+						model : d[2]
+					});
+				})
 				var list = { 'ips': ips, 'dir': '' };
 				fs.writeFile('./adb_data.json', JSON.stringify(list), function (err) {	// adb_data.json 파일 쓰기
-					list.devices = devices;
-					res.json(JSON.stringify(list));
+					list.ips.map((v, i) => {
+						Object.assign(v, ipsInfo[i]);
+					})
+					res.json(list);
 				});
 			}
 		}
@@ -140,15 +144,18 @@ exports.screen = function(req, res) {
 	var fileName = moment().format('YYYYMMDDHHmmSSss');
 	adbExec(`adb -s ${req.body.ip} shell screencap -p /sdcard/${fileName}.png`, (rs) => {
 		if(rs.resCode == 'stdout') {
-			adbExec(`adb -s ${req.body.ip} pull /sdcard/${fileName}.png C:/Users/User/Desktop`, (rs) => {
+			adbExec(`adb -s ${req.body.ip} pull /sdcard/${fileName}.png ${req.body.dir}`, (rs) => {
 				if(rs.resCode == 'stdout') {
 					adbExec(`adb -s ${req.body.ip} shell rm /sdcard/${fileName}.png`, (rs) => {
 						res.json(fileName);
 					});
 				}
 			});
-		}		
+		} else {
+			res.json(null);
+		}
 	});
+	
 };
 
 exports.log = function(req, res) {
