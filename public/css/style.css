@@ -63,3 +63,14 @@ a {
   width: -webkit-fill-available;
   margin: 2px;
 }
+
+.reload {
+  float: right;
+  border: 0;
+  padding: 0;
+}
+
+.reload > img {
+  width: 30px;
+  background-color: white;
+}

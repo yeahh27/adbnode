@@ -245,11 +245,10 @@ $(document).ready(function () {
 	});
 	
 	var inputT = function() {
-		console.log($('#typing').val());
 		$.ajax('/typing', {
 			'method': 'POST',
 			'data': {
-				'typing': $('#typing').val().replace(/\s/g, ""),
+				'typing': $('#typing').val().replace(/\s/g, "%s"),
 				'ip': $(":input:radio[name=ip]:checked").val()
 			},
 			'success': function(str) {
@@ -267,7 +266,20 @@ $(document).ready(function () {
 		inputT();
 	});
 
+	var keyEvent = function(code) {
+		$.ajax('/keyEvent', {
+			'method': 'POST',
+			'data': {
+				'code': code,
+				'ip': $(":input:radio[name=ip]:checked").val()
+			},
+			'success': function(str) {
+			}
+		});
+	};
+
 	$('#typeCBtn').click(function() {
+		keyEvent('20 19 67');		// 아래 > 위 > 삭제
 	});
 
 	$('#dev').click(function () {
@@ -304,5 +316,9 @@ $(document).ready(function () {
 				_.attr("disabled", false);
 			}
 		});
+	});
+
+	$('#remote').on('click', 'button', function (e) {
+		if(e.target.value) keyEvent(e.target.value);
 	});
 });

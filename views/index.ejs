@@ -7,14 +7,13 @@
 		<link rel="shortcut icon" href="#">
 	</head>
 	<body>
-		<h1><%= title %></h1>
+		<h1><%= title %> Nodejs</h1><button type="button" class="reload" onclick="location.reload(true)"><img src="/img/reload.png" alt="새로 고침"></button>
 		<p>Welcome to <%= title %></p>        
 		<form class="form-inline left">
 			<div class="form-group">
 				<input type="text" class="form-control" id="ip" placeholder="IP">
 			</div>&nbsp;
 			<button type="button" class="btn btn-primary" id="connect">connect</button>&nbsp;
-			<!-- <button type="button" class="btn btn-danger" id="disconnect">disconnect</button>&nbsp; -->
 			<button type="button" class="btn btn-dark" id="disconnectAll">disconnectAll</button>
 		</form>
 		<div class="input right">
@@ -54,6 +53,22 @@
 			<input type="text" id="typing" class="input-cont" placeholder="TEXT 입력">
 			<button type="button" class="btn" id="typeBtn">T</button>
 			<button type="button" class="btn" id="typeCBtn">C</button>
+		</div>
+
+		<div id="remote">
+			<button type="button" value="19">위</button>
+			<button type="button" value="20">아래</button>
+			<button type="button" value="21">왼</button>
+			<button type="button" value="22">오</button>
+			<button type="button" value="23">확인</button>
+			<button type="button" value="4">이전</button>
+			<button type="button" value="131">나가기</button>
+			<button type="button" value="24">Vol+</button>
+			<button type="button" value="25">Vol-</button>
+			<button type="button" value="164">Mute</button>
+			<button type="button" value="183">pre</button>
+			<button type="button" value="85">재생</button>
+			<button type="button" value="186">next</button>
 		</div>
 	</body>
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>

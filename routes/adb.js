@@ -168,7 +168,6 @@ exports.log = function(req, res) {
 };
 
 exports.logClear = function(req, res) {
-	console.log("123123")
 	adbExec(`adb -s ${req.body.ip} logcat -c`, (rs) => {
 		if(rs.resCode == 'stdout') {
 			res.json(true);
@@ -189,7 +188,6 @@ exports.dir = function(req, res){
 };
 
 exports.word = function(req, res) {
-	// console.log(req.body.ip, req.body.word);
 	adbExec(`adb -s ${req.body.ip} shell am broadcast -a "kt.action.voicecommand.asr" --es "kwsText" "${req.body.word}"`, (rs) => {
 		if(rs.resCode == 'stdout') {
 			res.json(`INPUT(${req.body.ip}) ${req.body.word}`);
@@ -200,7 +198,15 @@ exports.word = function(req, res) {
 };
 
 exports.typing = function(req, res) {
-	console.log(req.body.ip, req.body.typing);
+	adbExec(`adb -s ${req.body.ip} shell input text '${req.body.typing}'`, (rs) => {
+		res.json(true);
+	});
+};
+
+exports.keyEvent = function(req, res) {
+	adbExec(`adb -s ${req.body.ip} shell input keyevent ${req.body.code}`, (rs) => {
+		res.json(true);
+	});
 };
 
 exports.dev = function(req, res) {
