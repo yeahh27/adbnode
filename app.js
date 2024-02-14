@@ -13,7 +13,7 @@ var bodyParser = require('body-parser');
 var ip = require('ip');
 
 var app = express();	// 어플리케이션 생성
-var port = 3000;		// 어플리케이션 포트
+var port = 8090;		// 어플리케이션 포트
 
 // 어플리케이션 설정
 // app.configure(function(){
@@ -47,7 +47,12 @@ app.post('/disconnect', adb.disconnect);
 app.post('/del', adb.del);
 app.post('/screen', adb.screen);
 app.post('/dir', adb.dir);
+app.post('/word', adb.word);
+app.post('/typing', adb.typing);
 app.post('/log', adb.log);
+app.post('/logClear', adb.logClear);
+app.post('/dev', adb.dev);
+app.post('/devOff', adb.devOff);
 
 // 서버 실행
 http.createServer(app).listen(app.get('port'), function(){

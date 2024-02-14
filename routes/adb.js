@@ -141,7 +141,7 @@ exports.del = function(req, res){
 };
 
 exports.screen = function(req, res) {
-	var fileName = moment().format('YYYYMMDDHHmmSSss');
+	var fileName = moment().format('YYYYMMDD_HHmmSSss');
 	adbExec(`adb -s ${req.body.ip} shell screencap -p /sdcard/${fileName}.png`, (rs) => {
 		if(rs.resCode == 'stdout') {
 			adbExec(`adb -s ${req.body.ip} pull /sdcard/${fileName}.png ${req.body.dir}`, (rs) => {
@@ -159,19 +159,21 @@ exports.screen = function(req, res) {
 };
 
 exports.log = function(req, res) {
-	console.log("123", req.body.ip, req.body.dir)
-	/* var fileName = moment().format('YYYYMMDDHHmmSSss');
-	adbExec(`adb -s ${req.body.ip} shell screencap -p /sdcard/${fileName}.png`, (rs) => {
+	var fileName = moment().format('YYYYMMDD_HHmmSSss');
+	adbExec(`adb -s ${req.body.ip} logcat -d -v time > ${req.body.dir}/${fileName}.log`, (rs) => {
 		if(rs.resCode == 'stdout') {
-			adbExec(`adb -s ${req.body.ip} pull /sdcard/${fileName}.png C:/Users/User/Desktop`, (rs) => {
-				if(rs.resCode == 'stdout') {
-					adbExec(`adb -s ${req.body.ip} shell rm /sdcard/${fileName}.png`, (rs) => {
-						res.json(fileName);
-					});
-				}
-			});
-		}		
-	}); */
+			res.json(fileName);
+		}
+	});
+};
+
+exports.logClear = function(req, res) {
+	console.log("123123")
+	adbExec(`adb -s ${req.body.ip} logcat -c`, (rs) => {
+		if(rs.resCode == 'stdout') {
+			res.json(true);
+		}
+	});
 };
 
 exports.dir = function(req, res){
@@ -183,5 +185,32 @@ exports.dir = function(req, res){
 		fs.writeFile('./adb_data.json', JSON.stringify(data), function (err) {
 			res.json(true);
 		});
+	});
+};
+
+exports.word = function(req, res) {
+	// console.log(req.body.ip, req.body.word);
+	adbExec(`adb -s ${req.body.ip} shell am broadcast -a "kt.action.voicecommand.asr" --es "kwsText" "${req.body.word}"`, (rs) => {
+		if(rs.resCode == 'stdout') {
+			res.json(`INPUT(${req.body.ip}) ${req.body.word}`);
+		} else {
+			res.json("INPUT FAILED.");
+		}
+	});
+};
+
+exports.typing = function(req, res) {
+	console.log(req.body.ip, req.body.typing);
+};
+
+exports.dev = function(req, res) {
+	adbExec(`adb -s ${req.body.ip} shell am broadcast -a "kt.action.container.devmode.req" --ei "devmodeState" 1 --ei "pwrState" 0 --es "userKey" "UNKNOWN" --es "uword" "개발자모드"`, (rs) => {
+		res.json(true);
+	});
+};
+
+exports.devOff = function(req, res) {
+	adbExec(`adb -s ${req.body.ip} shell am broadcast -a "kt.action.container.devmode.req" --ei "devmodeState" 0 --ei "pwrState" 0 --es "userKey" "UNKNOWN" --es "uword" "개발자모드해제"`, (rs) => {
+		res.json(true);
 	});
 };

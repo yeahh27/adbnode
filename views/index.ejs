@@ -9,7 +9,7 @@
 	<body>
 		<h1><%= title %></h1>
 		<p>Welcome to <%= title %></p>        
-		<form class="form-inline">	<!-- 새로운 ToDo 항목 추가 -->
+		<form class="form-inline left">
 			<div class="form-group">
 				<input type="text" class="form-control" id="ip" placeholder="IP">
 			</div>&nbsp;
@@ -17,14 +17,25 @@
 			<!-- <button type="button" class="btn btn-danger" id="disconnect">disconnect</button>&nbsp; -->
 			<button type="button" class="btn btn-dark" id="disconnectAll">disconnectAll</button>
 		</form>
+		<div class="input right">
+			<label for="dir">Path</label>
+			<input type="text" class="input-cont" id="dir" placeholder="파일 저장 위치 (C:/Users/User/Desktop)">
+			<button type="button" class="btn" id="dirSave">S</button>
+			<!-- <input type="file" name="" id="dir" webkitdirectory> -->
+		</div>
+		<div class="btnDiv">
+			<button type="button" class="btn btn-warning" id="screenshot">Screen</button>
+			<button type="button" class="btn btn-success" id="log">Log</button>
+			<button type="button" class="btn btn-warning" id="logC">LogClear</button>
+			<button type="button" class="btn btn-success" id="dev">DevMode</button>
+			<button type="button" class="btn btn-warning" id="devOff">DevModeOff</button>
+		</div>
 		<table class="table">
 			<thead>
 				<tr>
 					<th>#</th>
 					<th>ip</th>
 					<th>정보</th>
-					<th>screenshot</th>
-					<th>log</th>
 					<th>상태</th>
 					<th>삭제</th>
 				</tr>
@@ -32,10 +43,17 @@
 			<tbody></tbody>
 		</table>
 		
-        <div class="dir">
-			파일저장 위치 <button type="button" class="btn btn-dark" id="dirSave">SAVE</button>
-			<input type="text" class="form-control none" id="dir" placeholder="C:/Users/User/Desktop">
-			<!-- <input type="file" name="" id="dir" webkitdirectory> -->
+		<div class="input left">
+			<label for="word">Word</label>
+			<input type="text" id="word" class="input-cont" placeholder="발화 입력">
+			<button type="button" class="btn" id="wordBtn">W</button>
+		</div>
+
+		<div class="input right">
+			<label for="typing">Type</label>
+			<input type="text" id="typing" class="input-cont" placeholder="TEXT 입력">
+			<button type="button" class="btn" id="typeBtn">T</button>
+			<button type="button" class="btn" id="typeCBtn">C</button>
 		</div>
 	</body>
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>

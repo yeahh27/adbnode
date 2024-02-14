@@ -1,6 +1,7 @@
 body {
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 1000px;
 }
 a {
   color: #00b7ff;
@@ -14,14 +15,51 @@ a {
   color: gray;
 }
 
-.table {
-  float: right;
+.input {
+  width: 50%;
+  display: inline-block;
 }
 
-.dir button {
-  margin:1px ;
+.input label {
+  width: 8%;
 }
 
-.dir .none {
-  border: 1px solid red;
+.left { float: left; }
+.right { float: right; }
+
+.input-cont {
+  display: inline-block;
+  height: calc(1.5em + .75rem + 2px);
+  padding: .375rem .75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+  transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+  width: 70%;
+}
+
+.input-cont:disabled {
+  background-color: lightgrey;
+}
+
+.input button {
+  border: 2px solid cornflowerblue;
+  height: calc(1.5em + .75rem + 2px);
+  margin-bottom: 5px;
+}
+
+.btnDiv {
+  width: 95%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.btnDiv button {
+  width: -webkit-fill-available;
+  margin: 2px;
 }
